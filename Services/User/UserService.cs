@@ -70,7 +70,7 @@ namespace CF_User.Services.User
         }
 
 
-        public async Task<bool> VerifyPasswordAsync(AppUser user, string password)
+        public bool VerifyPassword(AppUser user, string password)
         {
             return _hasher.VerifyHashedPassword(user.PasswordHash, password) == PasswordVerificationResult.Success;
         }
