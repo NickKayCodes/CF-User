@@ -15,7 +15,9 @@
             Email = email;
             PasswordHash = HashPassword(password);
         }
- 
+        public AppUser() { }
+
+
         public void SetPassword(string password)
         {
             PasswordHash = HashPassword(password);
