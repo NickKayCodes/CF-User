@@ -9,6 +9,7 @@ namespace CF_User.Model
         public string Email { get; private set; }
         public string PasswordHash { get; private set; }
         public UserRole Role { get; set; }
+        public ICollection<UserPrivilege> Privileges { get; set; } = new List<UserPrivilege>();
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
 

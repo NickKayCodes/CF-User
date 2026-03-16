@@ -1,4 +1,5 @@
 ﻿using CF_User.Model;
+using CF_User.Model.enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CF_User.Data
@@ -36,6 +37,17 @@ namespace CF_User.Data
             modelBuilder.Entity<AppUser>()
                 .Property(u => u.Role)
                 .HasConversion<string>();
+
+            // store the list of privileges as a comma-separated string in the database
+            // Java equivalent would be: @ElementCollection(fetch = FetchType.EAGER) @CollectionTable(name = "user_privileges", joinColumns = @JoinColumn(name = "user_id")) @Column(name = "privilege")
+            modelBuilder.Entity<AppUser>()
+                .Property(u => u.Privileges)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(p => Enum.Parse<UserPrivilege>(p))
+                        .ToList()
+    );
 
         }
     }
