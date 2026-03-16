@@ -1,4 +1,6 @@
-﻿namespace CF_User.Model
+﻿using CF_User.Model.enums;
+
+namespace CF_User.Model
 {
     public class AppUser
     {
@@ -6,6 +8,7 @@
         public string Username { get; private set; }
         public string Email { get; private set; }
         public string PasswordHash { get; private set; }
+        public UserRole Role { get; set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
 
