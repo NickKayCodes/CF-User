@@ -2,11 +2,11 @@
 
 namespace CF_User.Model.JE
 {
-    public class UserPrivilegeEntity
+    public class UserPrivilege
     {
         public Guid UserId { get; set; }
         public AppUser User { get; set; }
-        public UserPrivilege Privilege { get; set; }
+        public Privilege Privilege { get; set; }
 
     }
 }

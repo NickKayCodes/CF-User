@@ -10,8 +10,8 @@ namespace CF_User.Model
         public string Email { get; private set; }
         public string PasswordHash { get; private set; }
         public UserRole Role { get; set; }
-        public ICollection<UserPrivilegeEntity> Privileges { get; private set; } =
-            new List<UserPrivilegeEntity>();
+        public ICollection<UserPrivilege> Privileges { get; private set; } =
+            new List<UserPrivilege>();
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
         public AppUser(string username, string email, string password)

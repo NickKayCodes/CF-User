@@ -13,6 +13,8 @@ namespace CF_User.Data
 
         public DbSet<AppUser> Users => Set<AppUser>();
 
+        public DbSet<UserPrivilege> UserPrivileges => Set<UserPrivilege>();
+
         // configure the model for db entity framework
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,17 +36,17 @@ namespace CF_User.Data
             modelBuilder.Entity<AppUser>().Property(u => u.Role).HasConversion<string>();
 
             // configure the UserPrivilegeEntity with composite key and relationships
-            modelBuilder.Entity<UserPrivilegeEntity>().HasKey(p => new { p.UserId, p.Privilege });
+            modelBuilder.Entity<UserPrivilege>().ToTable("UserPrivileges").HasKey(p => new { p.UserId, p.Privilege });
 
             // configure enum to string conversion for UserPrivilege 
             modelBuilder
-                .Entity<UserPrivilegeEntity>()
+                .Entity<UserPrivilege>()
                 .Property(p => p.Privilege)
                 .HasConversion<string>();
 
             // configure the relationship between AppUser and UserPrivilegeEntity
             modelBuilder
-                .Entity<UserPrivilegeEntity>()
+                .Entity<UserPrivilege>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Privileges)
                 .HasForeignKey(p => p.UserId);

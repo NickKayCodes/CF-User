@@ -4,99 +4,99 @@ namespace CF_User.Services.User
 {
     public static class RolePrivilegeMap
     {
-        public static readonly Dictionary<UserRole, List<UserPrivilege>> Privileges = new()
+        public static readonly Dictionary<UserRole, List<Privilege>> Privileges = new()
         {
             {
                 UserRole.ADMIN,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.FULL_ACCESS
+                    Privilege.FULL_ACCESS
                 }
             },
             {
                 UserRole.MANAGER,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_EVENT,
-                    UserPrivilege.VIEW_INVENTORY,
-                    UserPrivilege.VIEW_REPORT,
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_EVENT_PLAN,
-                    UserPrivilege.VIEW_INVOICE,
-                    UserPrivilege.EDIT_REPORT,
-                    UserPrivilege.EDIT_EVENT,
-                    UserPrivilege.EDIT_INVENTORY,
-                    UserPrivilege.EDIT_MENU,
-                    UserPrivilege.EDIT_EVENT_PLAN,
-                    UserPrivilege.MANAGE_INVENTORY,
-                    UserPrivilege.MANAGE_STAFF,
-                    UserPrivilege.MANAGE_KITCHEN,
-                    UserPrivilege.UPDATE_MENU,
-                    UserPrivilege.CREATE_INVOICE,
-                    UserPrivilege.APPROVE_EVENT,
-                    UserPrivilege.CREATE_REPORT
+                    Privilege.VIEW_EVENT,
+                    Privilege.VIEW_INVENTORY,
+                    Privilege.VIEW_REPORT,
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_EVENT_PLAN,
+                    Privilege.VIEW_INVOICE,
+                    Privilege.EDIT_REPORT,
+                    Privilege.EDIT_EVENT,
+                    Privilege.EDIT_INVENTORY,
+                    Privilege.EDIT_MENU,
+                    Privilege.EDIT_EVENT_PLAN,
+                    Privilege.MANAGE_INVENTORY,
+                    Privilege.MANAGE_STAFF,
+                    Privilege.MANAGE_KITCHEN,
+                    Privilege.UPDATE_MENU,
+                    Privilege.CREATE_INVOICE,
+                    Privilege.APPROVE_EVENT,
+                    Privilege.CREATE_REPORT
                 }
             },
             {
                 UserRole.KITCHEN_CHEF,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_EVENT_PLAN,
-                    UserPrivilege.EDIT_MENU,
-                    UserPrivilege.MANAGE_KITCHEN,
-                    UserPrivilege.UPDATE_MENU
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_EVENT_PLAN,
+                    Privilege.EDIT_MENU,
+                    Privilege.MANAGE_KITCHEN,
+                    Privilege.UPDATE_MENU
                 }
             },
             {
                 UserRole.EVENT_CHEF,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_EVENT,
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_EVENT_PLAN,
-                    UserPrivilege.EDIT_EVENT,
-                    UserPrivilege.EDIT_EVENT_PLAN,
-                    UserPrivilege.APPROVE_EVENT
+                    Privilege.VIEW_EVENT,
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_EVENT_PLAN,
+                    Privilege.EDIT_EVENT,
+                    Privilege.EDIT_EVENT_PLAN,
+                    Privilege.APPROVE_EVENT
                 }
             },
             {
                 UserRole.SERVER,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_EVENT,
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_EVENT_PLAN
+                    Privilege.VIEW_EVENT,
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_EVENT_PLAN
                 }
             },
             {
                 UserRole.CAPTAIN,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_EVENT,
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_EVENT_PLAN,
-                    UserPrivilege.EDIT_EVENT_PLAN
+                    Privilege.VIEW_EVENT,
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_EVENT_PLAN,
+                    Privilege.EDIT_EVENT_PLAN
                 }
             },
             {
                 UserRole.SALES_PLANNER,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_EVENT,
-                    UserPrivilege.VIEW_MENU,
-                    UserPrivilege.VIEW_INVOICE,
-                    UserPrivilege.EDIT_EVENT,
-                    UserPrivilege.CREATE_INVOICE
+                    Privilege.VIEW_EVENT,
+                    Privilege.VIEW_MENU,
+                    Privilege.VIEW_INVOICE,
+                    Privilege.EDIT_EVENT,
+                    Privilege.CREATE_INVOICE
                 }
             },
             {
                 UserRole.WAREHOUSE,
-                new List<UserPrivilege>
+                new List<Privilege>
                 {
-                    UserPrivilege.VIEW_INVENTORY,
-                    UserPrivilege.EDIT_INVENTORY,
-                    UserPrivilege.MANAGE_INVENTORY
+                    Privilege.VIEW_INVENTORY,
+                    Privilege.EDIT_INVENTORY,
+                    Privilege.MANAGE_INVENTORY
                 }
             }
         };

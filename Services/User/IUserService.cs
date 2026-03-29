@@ -10,6 +10,6 @@ namespace CF_User.Services.User
         Task<AppUser> CreateUserAsync(string username, string email, string password, UserRole role);
         Task<AppUser> GetUserByEmailAsync(string email);
         Task<String> DeleteUserByIdAsync(Guid id);
-        Task<String> UpdateUserByIdAsync(Guid id, string? username, string? email, string? password, UserRole? role, List<UserPrivilege>? privileges);
+        Task<String> UpdateUserByIdAsync(Guid id, string? username, string? email, string? password, UserRole? role, List<Privilege>? privileges);
     }
 }

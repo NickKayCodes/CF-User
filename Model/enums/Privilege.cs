@@ -1,6 +1,6 @@
 ﻿namespace CF_User.Model.enums
 {
-    public enum UserPrivilege
+    public enum Privilege
     {
         //For ADMIN role
         FULL_ACCESS,

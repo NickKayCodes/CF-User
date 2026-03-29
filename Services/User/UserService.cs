@@ -43,7 +43,7 @@ namespace CF_User.Services.User
             // assign privileges from role
             foreach (var priv in RolePrivilegeMap.Privileges[roles])
             {
-                user.Privileges.Add(new UserPrivilegeEntity { UserId = user.Id, Privilege = priv });
+                user.Privileges.Add(new UserPrivilege { UserId = user.Id, Privilege = priv });
             }
 
             await _repo.AddUserAsync(user);
@@ -74,7 +74,7 @@ namespace CF_User.Services.User
             string? email,
             string? password,
             UserRole? role,
-            List<UserPrivilege>? privileges
+            List<Privilege>? privileges
         )
         {
             var user = await _repo.GetByIdAsync(id);
@@ -101,7 +101,7 @@ namespace CF_User.Services.User
                     foreach (var priv in RolePrivilegeMap.Privileges[role.Value])
                     {
                         user.Privileges.Add(
-                            new UserPrivilegeEntity { UserId = user.Id, Privilege = priv }
+                            new UserPrivilege { UserId = user.Id, Privilege = priv }
                         );
                     }
                 }
@@ -114,7 +114,7 @@ namespace CF_User.Services.User
                 foreach (var priv in privileges)
                 {
                     user.Privileges.Add(
-                        new UserPrivilegeEntity { UserId = user.Id, Privilege = priv }
+                        new UserPrivilege { UserId = user.Id, Privilege = priv }
                     );
                 }
             }
