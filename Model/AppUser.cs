@@ -1,4 +1,5 @@
 ﻿using CF_User.Model.enums;
+using CF_User.Model.JE;
 
 namespace CF_User.Model
 {
@@ -9,9 +10,9 @@ namespace CF_User.Model
         public string Email { get; private set; }
         public string PasswordHash { get; private set; }
         public UserRole Role { get; set; }
-        public ICollection<UserPrivilege> Privileges { get; set; } = new List<UserPrivilege>();
+        public ICollection<UserPrivilegeEntity> Privileges { get; private set; } =
+            new List<UserPrivilegeEntity>();
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-
 
         public AppUser(string username, string email, string password)
         {
@@ -19,8 +20,8 @@ namespace CF_User.Model
             Email = email;
             PasswordHash = HashPassword(password);
         }
-        public AppUser() { }
 
+        public AppUser() { }
 
         public void SetPassword(string password)
         {

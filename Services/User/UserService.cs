@@ -1,4 +1,7 @@
-﻿using CF_User.Model;
+﻿using System.Data;
+using CF_User.Model;
+using CF_User.Model.enums;
+using CF_User.Model.JE;
 using CF_User.Repo.User;
 using CF_User.Services.PH;
 using Microsoft.AspNetCore.Identity;
@@ -16,14 +19,32 @@ namespace CF_User.Services.User
             _hasher = hasher;
         }
 
-        public async Task<AppUser> CreateUserAsync(string username, string email, string password)
+        /**
+         * when Creating a user, Roles needs to be assigned
+         * The roles c roles can already have privileges assigned to them,
+         * so when a user is created with a role, they automatically inherit the privileges of that role.
+         *
+         */
+        public async Task<AppUser> CreateUserAsync(
+            string username,
+            string email,
+            string password,
+            UserRole roles
+        )
         {
             var existing = await _repo.GetByEmailAsync(email);
             if (existing != null)
                 throw new Exception("Email already in use");
 
             var hash = _hasher.HashPassword(password);
-            var user = new AppUser(username, email, hash);
+
+            var user = new AppUser(username, email, hash) { Role = roles};
+
+            // assign privileges from role
+            foreach (var priv in RolePrivilegeMap.Privileges[roles])
+            {
+                user.Privileges.Add(new UserPrivilegeEntity { UserId = user.Id, Privilege = priv });
+            }
 
             await _repo.AddUserAsync(user);
             return user;
@@ -37,9 +58,7 @@ namespace CF_User.Services.User
 
             await _repo.DeleteUserAsync(existingUser);
             return "User deleted successfully";
-
         }
-
 
         public async Task<AppUser> GetUserByEmailAsync(string email)
         {
@@ -49,32 +68,65 @@ namespace CF_User.Services.User
             return existingUser;
         }
 
-        public async Task<string> UpdateUserByIdAsync(Guid id, string? username, string? email, string? password)
+        public async Task<string> UpdateUserByIdAsync(
+            Guid id,
+            string? username,
+            string? email,
+            string? password,
+            UserRole? role,
+            List<UserPrivilege>? privileges
+        )
         {
-            var existingUser = await _repo.GetByIdAsync(id);
-            if (existingUser == null)
+            var user = await _repo.GetByIdAsync(id);
+            if (user == null)
                 throw new Exception("User not found");
 
+            // identity fields
             if (username != null)
-                existingUser.SetUsername(username);
-
+                user.SetUsername(username);
             if (email != null)
-                existingUser.SetEmail(email);
-
+                user.SetEmail(email);
             if (password != null)
-                existingUser.SetPassword(_hasher.HashPassword(password));
+                user.SetPassword(_hasher.HashPassword(password));
 
-            await _repo.UpdateUserbyIdAsync(existingUser);
+            // role changed
+            if (role != null)
+            {
+                user.Role = (UserRole)role;
 
+                // if privileges not explicitly provided, recalc from role
+                if (privileges == null)
+                {
+                    user.Privileges.Clear();
+                    foreach (var priv in RolePrivilegeMap.Privileges[role.Value])
+                    {
+                        user.Privileges.Add(
+                            new UserPrivilegeEntity { UserId = user.Id, Privilege = priv }
+                        );
+                    }
+                }
+            }
+
+            // explicit privilege override
+            if (privileges != null)
+            {
+                user.Privileges.Clear();
+                foreach (var priv in privileges)
+                {
+                    user.Privileges.Add(
+                        new UserPrivilegeEntity { UserId = user.Id, Privilege = priv }
+                    );
+                }
+            }
+
+            await _repo.UpdateUserbyIdAsync(user);
             return "User updated successfully";
         }
 
-
         public bool VerifyPassword(AppUser user, string password)
         {
-            return _hasher.VerifyHashedPassword(user.PasswordHash, password) == PasswordVerificationResult.Success;
+            return _hasher.VerifyHashedPassword(user.PasswordHash, password)
+                == PasswordVerificationResult.Success;
         }
-
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using CF_User.Data.TO;
+﻿using CF_User.Data.TO.Create;
+using CF_User.Data.TO.Update;
+using CF_User.Model.enums;
 using CF_User.Services.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +27,12 @@ namespace CF_User.Controllers
         {
             try
             {
-                var user = await _service.CreateUserAsync(req.Username, req.Email, req.Password);
+                if (!Enum.TryParse<UserRole>(req.Role, ignoreCase: true, out var role))
+                {
+                    return BadRequest("Invalid role provided");
+                }
+
+                var user = await _service.CreateUserAsync(req.Username, req.Email, req.Password, role);
                 return Ok(user);
             }
             catch (Exception ex)
@@ -53,7 +60,25 @@ namespace CF_User.Controllers
         {
             try
             {
-                var result = await _service.UpdateUserByIdAsync(id, request.Username, request.Email, request.Password);
+                UserRole? parsedRole = null;
+
+                if (!string.IsNullOrWhiteSpace(request.Role))
+                {
+                    if (!Enum.TryParse<UserRole>(request.Role, true, out var r))
+                        return BadRequest("Invalid role provided");
+
+                    parsedRole = r;
+                }
+
+                var result = await _service.UpdateUserByIdAsync(
+                    id,
+                    request.Username,
+                    request.Email,
+                    request.Password,
+                    parsedRole,
+                    request.Privileges
+                );
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -61,6 +86,8 @@ namespace CF_User.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUserById(Guid id)
