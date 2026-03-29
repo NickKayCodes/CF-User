@@ -1,5 +1,6 @@
 ﻿using CF_User.Data.TO.Create;
 using CF_User.Data.TO.Delete;
+using CF_User.Data.TO.Get;
 using CF_User.Data.TO.Update;
 using CF_User.Model;
 using CF_User.Model.enums;
@@ -118,7 +119,7 @@ namespace CF_User.Services.User
             }
         }
 
-        public async Task<AppUser> GetUserByEmailAsync(string email)
+        public async Task<GetByEmailResponse> GetUserByEmailAsync(string email)
         {
             _logger.LogInformation("GetUserByEmailAsync called for email: {Email}", email);
 
@@ -132,7 +133,16 @@ namespace CF_User.Services.User
                 }
 
                 _logger.LogInformation("User retrieved successfully - ID: {UserId}, email: {Email}", existingUser.Id, existingUser.Email);
-                return existingUser;
+                
+                return new GetByEmailResponse
+                {
+                    Id = existingUser.Id,
+                    Username = existingUser.Username,
+                    Email = existingUser.Email,
+                    Role = existingUser.Role,
+                    Privileges = existingUser.Privileges.Select(p => p.Privilege).ToList(),
+                    CreatedAt = existingUser.CreatedAt
+                };
             }
             catch (Exception ex)
             {
