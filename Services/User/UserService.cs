@@ -1,10 +1,11 @@
-﻿using System.Data;
+﻿using CF_User.Data.TO.Create;
 using CF_User.Model;
 using CF_User.Model.enums;
 using CF_User.Model.JE;
 using CF_User.Repo.User;
 using CF_User.Services.PH;
 using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace CF_User.Services.User
 {
@@ -25,11 +26,11 @@ namespace CF_User.Services.User
          * so when a user is created with a role, they automatically inherit the privileges of that role.
          *
          */
-        public async Task<AppUser> CreateUserAsync(
+        public async Task<CreateUserResponse> CreateUserAsync(
             string username,
             string email,
             string password,
-            UserRole roles
+            UserRole role
         )
         {
             var existing = await _repo.GetByEmailAsync(email);
@@ -38,16 +39,24 @@ namespace CF_User.Services.User
 
             var hash = _hasher.HashPassword(password);
 
-            var user = new AppUser(username, email, hash) { Role = roles};
+            var user = new AppUser(username, email, hash) { Role = role};
 
             // assign privileges from role
-            foreach (var priv in RolePrivilegeMap.Privileges[roles])
+            foreach (var priv in RolePrivilegeMap.Privileges[role])
             {
                 user.Privileges.Add(new UserPrivilege { UserId = user.Id, Privilege = priv });
             }
 
             await _repo.AddUserAsync(user);
-            return user;
+
+            return new CreateUserResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
         }
 
         public async Task<String> DeleteUserByIdAsync(Guid id)
