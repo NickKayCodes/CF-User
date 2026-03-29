@@ -6,14 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CF_User.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
     public class AppUserController : ControllerBase
     {
         private readonly IUserService _service;
-
         private readonly ILogger<AppUserController> _logger;
 
         public AppUserController(ILogger<AppUserController> logger, IUserService service)
