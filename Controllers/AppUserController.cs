@@ -27,7 +27,7 @@ namespace CF_User.Controllers
 
             try
             {
-                _logger.LogDebug("Attempting to parse role: {Role}", req.Role);
+                _logger.LogInformation("Attempting to parse role: {Role}", req.Role);
 
                 if (!Enum.TryParse<UserRole>(req.Role, ignoreCase: true, out var role))
                 {
@@ -35,7 +35,7 @@ namespace CF_User.Controllers
                     return BadRequest("Invalid role provided");
                 }
 
-                _logger.LogDebug("Role parsed successfully: {Role}", role);
+                _logger.LogInformation("Role parsed successfully: {Role}", role);
                 var response = await _service.CreateUserAsync(req.Username, req.Email, req.Password, role);
 
                 _logger.LogInformation("User created successfully with ID: {UserId}, username: {Username}", response.Id, response.Username);
@@ -55,7 +55,7 @@ namespace CF_User.Controllers
 
             try
             {
-                _logger.LogDebug("Fetching user by email: {Email}", email);
+                _logger.LogInformation("Fetching user by email: {Email}", email);
                 var response = await _service.GetUserByEmailAsync(email);
 
                 _logger.LogInformation("User retrieved successfully with ID: {UserId}, email: {Email}", response.Id, response.Email);
@@ -75,13 +75,13 @@ namespace CF_User.Controllers
 
             try
             {
-                _logger.LogDebug("Update request - Username: {Username}, Email: {Email}, Role: {Role}", request.Username, request.Email, request.Role);
+                _logger.LogInformation("Update request - Username: {Username}, Email: {Email}, Role: {Role}", request.Username, request.Email, request.Role);
 
                 UserRole? parsedRole = null;
 
                 if (!string.IsNullOrWhiteSpace(request.Role))
                 {
-                    _logger.LogDebug("Attempting to parse role: {Role}", request.Role);
+                    _logger.LogInformation("Attempting to parse role: {Role}", request.Role);
 
                     if (!Enum.TryParse<UserRole>(request.Role, true, out var r))
                     {
@@ -90,10 +90,10 @@ namespace CF_User.Controllers
                     }
 
                     parsedRole = r;
-                    _logger.LogDebug("Role parsed successfully: {Role}", parsedRole);
+                    _logger.LogInformation("Role parsed successfully: {Role}", parsedRole);
                 }
 
-                _logger.LogDebug("Calling UpdateUserByIdAsync with privileges count: {PrivilegeCount}", request.Privileges?.Count ?? 0);
+                _logger.LogInformation("Calling UpdateUserByIdAsync with privileges count: {PrivilegeCount}", request.Privileges?.Count ?? 0);
                 var response = await _service.UpdateUserByIdAsync(
                     id,
                     request.Username,
@@ -120,7 +120,7 @@ namespace CF_User.Controllers
 
             try
             {
-                _logger.LogDebug("Attempting to delete user with ID: {UserId}", id);
+                _logger.LogInformation("Attempting to delete user with ID: {UserId}", id);
                 var response = await _service.DeleteUserByIdAsync(id);
 
                 _logger.LogInformation("User deleted successfully with ID: {UserId}", id);

@@ -18,21 +18,22 @@ namespace CF_User.Repo.User
 
         public async Task<AppUser?> GetByEmailAsync(string email)
         {
-            _logger.LogDebug("Fetching user by email: {Email}", email);
+            _logger.LogInformation("Fetching user by email: {Email}", email);
 
             try
             {
+                var normalized = email?.Trim().ToLower();
                 var user = await _db.Users
                     .Include(u => u.Privileges)
-                    .FirstOrDefaultAsync(u => u.Email == email);
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == normalized);
 
                 if (user == null)
                 {
-                    _logger.LogDebug("User not found for email: {Email}", email);
+                    _logger.LogInformation("User not found for email: {Email}", email);
                     return null;
                 }
 
-                _logger.LogDebug("User found for email: {Email} with ID: {UserId}", email, user.Id);
+                _logger.LogInformation("User found for email: {Email} with ID: {UserId}", email, user.Id);
                 return user;
             }
             catch (Exception ex)
@@ -44,7 +45,7 @@ namespace CF_User.Repo.User
 
         public async Task<AppUser?> GetByIdAsync(Guid id)
         {
-            _logger.LogDebug("Fetching user by ID: {UserId}", id);
+            _logger.LogInformation("Fetching user by ID: {UserId}", id);
 
             try
             {
@@ -54,11 +55,11 @@ namespace CF_User.Repo.User
 
                 if (user == null)
                 {
-                    _logger.LogDebug("User not found for ID: {UserId}", id);
+                    _logger.LogInformation("User not found for ID: {UserId}", id);
                     return null;
                 }
 
-                _logger.LogDebug("User found for ID: {UserId} with email: {Email}", id, user.Email);
+                _logger.LogInformation("User found for ID: {UserId} with email: {Email}", id, user.Email);
                 return user;
             }
             catch (Exception ex)

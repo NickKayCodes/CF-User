@@ -13,6 +13,8 @@ namespace CF_User.Data
 
         public DbSet<AppUser> Users => Set<AppUser>();
 
+        public DbSet<CF_User.Model.Auth.RefreshToken> RefreshTokens => Set<CF_User.Model.Auth.RefreshToken>();
+
         public DbSet<UserPrivilege> UserPrivileges => Set<UserPrivilege>();
 
         // configure the model for db entity framework
@@ -50,6 +52,19 @@ namespace CF_User.Data
                 .HasOne(p => p.User)
                 .WithMany(u => u.Privileges)
                 .HasForeignKey(p => p.UserId);
+
+            // configure RefreshToken
+            modelBuilder.Entity<CF_User.Model.Auth.RefreshToken>()
+                .ToTable("RefreshTokens")
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<CF_User.Model.Auth.RefreshToken>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(r => r.UserId);
+
+            modelBuilder.Entity<CF_User.Model.Auth.RefreshToken>()
+                .HasIndex(r => r.TokenHash);
 
 
         }

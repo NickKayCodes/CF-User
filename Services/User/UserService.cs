@@ -40,6 +40,10 @@ namespace CF_User.Services.User
 
             try
             {
+                // normalize email for consistency
+                email = email?.Trim().ToLower();
+                username = username?.Trim();
+
                 var existing = await _repo.GetByEmailAsync(email);
                 if (existing != null)
                 {
@@ -47,16 +51,24 @@ namespace CF_User.Services.User
                     throw new Exception("Email already in use");
                 }
 
-                _logger.LogDebug("Email {Email} is available, proceeding with user creation", email);
+                _logger.LogInformation("Email {Email} is available, proceeding with user creation", email);
 
                 var hash = _hasher.HashPassword(password);
-                var user = new AppUser(username, email, hash) { Role = role };
+                // log hash characteristics (do not log full hash in production)
+                _logger.LogInformation("Password hashed for new user - hashPrefix: {HashPrefix}, length: {HashLength}",
+                    hash?.Substring(0, Math.Min(8, hash.Length)), hash?.Length ?? 0);
 
-                _logger.LogDebug("Assigning privileges for role: {Role}", role);
+                var user = new AppUser();
+                user.SetUsername(username);
+                user.SetEmail(email);
+                user.SetPasswordHash(hash); // already hashed by IPH
+                user.Role = role;
+
+                _logger.LogInformation("Assigning privileges for role: {Role}", role);
 
                 // assign privileges from role
                 var privilegesList = RolePrivilegeMap.Privileges[role];
-                _logger.LogDebug("Role {Role} has {PrivilegeCount} privileges", role, privilegesList.Count);
+                _logger.LogInformation("Role {Role} has {PrivilegeCount} privileges", role, privilegesList.Count);
 
                 foreach (var priv in privilegesList)
                 {
@@ -98,7 +110,7 @@ namespace CF_User.Services.User
                     throw new Exception("User not found");
                 }
 
-                _logger.LogDebug("User found - email: {Email}, username: {Username}, proceeding with deletion", 
+                _logger.LogInformation("User found - email: {Email}, username: {Username}, proceeding with deletion", 
                     existingUser.Email, existingUser.Username);
 
                 await _repo.DeleteUserAsync(existingUser);
@@ -161,7 +173,7 @@ namespace CF_User.Services.User
         )
         {
             _logger.LogInformation("UpdateUserByIdAsync called for user ID: {UserId}", id);
-            _logger.LogDebug("Update parameters - username: {Username}, email: {Email}, role: {Role}, privileges count: {PrivilegeCount}", 
+            _logger.LogInformation("Update parameters - username: {Username}, email: {Email}, role: {Role}, privileges count: {PrivilegeCount}", 
                 username ?? "not provided", email ?? "not provided", role?.ToString() ?? "not provided", privileges?.Count ?? 0);
 
             try
@@ -173,25 +185,26 @@ namespace CF_User.Services.User
                     throw new Exception("User not found");
                 }
 
-                _logger.LogDebug("User found for update - email: {Email}, current role: {Role}", user.Email, user.Role);
+                _logger.LogInformation("User found for update - email: {Email}, current role: {Role}", user.Email, user.Role);
 
                 // identity fields
                 if (username != null)
                 {
-                    _logger.LogDebug("Updating username from {OldUsername} to {NewUsername}", user.Username, username);
+                    _logger.LogInformation("Updating username from {OldUsername} to {NewUsername}", user.Username, username);
                     user.SetUsername(username);
                 }
 
                 if (email != null)
                 {
-                    _logger.LogDebug("Updating email from {OldEmail} to {NewEmail}", user.Email, email);
-                    user.SetEmail(email);
+                    var normalizedEmail = email.Trim().ToLower();
+                    _logger.LogInformation("Updating email from {OldEmail} to {NewEmail}", user.Email, normalizedEmail);
+                    user.SetEmail(normalizedEmail);
                 }
 
                 if (password != null)
                 {
-                    _logger.LogDebug("Password update requested for user ID: {UserId}", id);
-                    user.SetPassword(_hasher.HashPassword(password));
+                    _logger.LogInformation("Password update requested for user ID: {UserId}", id);
+                    user.SetPasswordHash(_hasher.HashPassword(password));
                 }
 
                 // role changed
@@ -203,7 +216,7 @@ namespace CF_User.Services.User
                     // if privileges not explicitly provided, recalc from role
                     if (privileges == null)
                     {
-                        _logger.LogDebug("No explicit privileges provided, recalculating from new role: {Role}", role);
+                        _logger.LogInformation("No explicit privileges provided, recalculating from new role: {Role}", role);
                         user.Privileges.Clear();
 
                         foreach (var priv in RolePrivilegeMap.Privileges[role.Value])
@@ -213,7 +226,7 @@ namespace CF_User.Services.User
                             );
                         }
 
-                        _logger.LogDebug("Assigned {PrivilegeCount} privileges from role {Role}", user.Privileges.Count, role);
+                        _logger.LogInformation("Assigned {PrivilegeCount} privileges from role {Role}", user.Privileges.Count, role);
                     }
                 }
 
@@ -230,7 +243,7 @@ namespace CF_User.Services.User
                         );
                     }
 
-                    _logger.LogDebug("Assigned {PrivilegeCount} explicit privileges", user.Privileges.Count);
+                    _logger.LogInformation("Assigned {PrivilegeCount} explicit privileges", user.Privileges.Count);
                 }
 
                 await _repo.UpdateUserbyIdAsync(user);
@@ -253,7 +266,7 @@ namespace CF_User.Services.User
 
         public bool VerifyPassword(AppUser user, string password)
         {
-            _logger.LogDebug("Verifying password for user ID: {UserId}", user.Id);
+            _logger.LogInformation("Verifying password for user ID: {UserId}", user.Id);
 
             try
             {
@@ -261,11 +274,11 @@ namespace CF_User.Services.User
                 
                 if (result)
                 {
-                    _logger.LogDebug("Password verification successful for user ID: {UserId}", user.Id);
+                    _logger.LogInformation("Password verification successful for user ID: {UserId}", user.Id);
                 }
                 else
                 {
-                    _logger.LogDebug("Password verification failed for user ID: {UserId}", user.Id);
+                    _logger.LogInformation("Password verification failed for user ID: {UserId}", user.Id);
                 }
 
                 return result;

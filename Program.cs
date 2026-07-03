@@ -22,6 +22,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IAuthService, AuthService>();
+// Development CORS policy to allow frontend integration during local development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 
 
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
@@ -66,6 +77,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+// Enable CORS for frontend development. This should be tightened for production.
+app.UseCors("DevCors");
 
 app.UseAuthorization();
 

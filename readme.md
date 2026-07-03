@@ -158,10 +158,17 @@ All routes are served under the base path:
 | PUT    | `/api/appuser/{id}`                | Update a user by ID    |
 | DELETE | `/api/appuser/{id}`                | Delete a user by ID    |
 
+Authentication endpoints
+| Method | Endpoint                         | Description |
+|--------|----------------------------------|-------------|
+| POST   | `/api/auth/login`                | Login with username/password; returns an access token and sets an HttpOnly refresh cookie |
+| POST   | `/api/auth/refresh`              | Rotate refresh token (reads HttpOnly cookie), returns a new access token and sets new refresh cookie |
+| POST   | `/api/auth/revoke`               | Revoke current refresh token (reads HttpOnly cookie) |
+
 
 ## Future Enhancements
-- JWT authentication
-- Refresh tokens
+- JWT authentication (implemented)
+- Stateful refresh tokens with rotate-on-use and server-side storage (implemented)
 - KYC/KYE workflows
 - Additional microservices (Menu, Orders, Billing)
 - API Gateway integration

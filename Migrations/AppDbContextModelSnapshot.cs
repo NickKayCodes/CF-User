@@ -58,6 +58,46 @@ namespace CF_User.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CF_User.Model.Auth.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RemoteIpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReplacedByTokenHash")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Revoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens", (string)null);
+                });
+
             modelBuilder.Entity("CF_User.Model.JE.UserPrivilege", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -69,6 +109,17 @@ namespace CF_User.Migrations
                     b.HasKey("UserId", "Privilege");
 
                     b.ToTable("UserPrivileges", (string)null);
+                });
+
+            modelBuilder.Entity("CF_User.Model.Auth.RefreshToken", b =>
+                {
+                    b.HasOne("CF_User.Model.AppUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CF_User.Model.JE.UserPrivilege", b =>
@@ -85,6 +136,8 @@ namespace CF_User.Migrations
             modelBuilder.Entity("CF_User.Model.AppUser", b =>
                 {
                     b.Navigation("Privileges");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
